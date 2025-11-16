@@ -1,0 +1,33 @@
+<annotation>
+  <folder>dc</folder>
+  <filename>dc_plastic_000045_PhlFazHo.jpg</filename>
+  <source>
+    <database>Unknown</database>
+    <annotation>Unknown</annotation>
+    <image>Unknown</image>
+  </source>
+  <size>
+    <width>2128</width>
+    <height>4608</height>
+    <depth></depth>
+  </size>
+  <segmented>0</segmented>
+  <object>
+    <name>plastic</name>
+    <truncated>0</truncated>
+    <occluded>0</occluded>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>409.07</xmin>
+      <ymin>10.93</ymin>
+      <xmax>1646.3</xmax>
+      <ymax>4476.05</ymax>
+    </bndbox>
+    <attributes>
+      <attribute>
+        <name>rotation</name>
+        <value>0.0</value>
+      </attribute>
+    </attributes>
+  </object>
+</annotation>

@@ -1,0 +1,33 @@
+<annotation>
+  <folder>dc</folder>
+  <filename>dc_plastic_000064_BTTPGrYi.jpg</filename>
+  <source>
+    <database>Unknown</database>
+    <annotation>Unknown</annotation>
+    <image>Unknown</image>
+  </source>
+  <size>
+    <width>3120</width>
+    <height>4160</height>
+    <depth></depth>
+  </size>
+  <segmented>0</segmented>
+  <object>
+    <name>plastic</name>
+    <truncated>0</truncated>
+    <occluded>0</occluded>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>153.36</xmin>
+      <ymin>2015.05</ymin>
+      <xmax>1843.17</xmax>
+      <ymax>3988.42</ymax>
+    </bndbox>
+    <attributes>
+      <attribute>
+        <name>rotation</name>
+        <value>0.0</value>
+      </attribute>
+    </attributes>
+  </object>
+</annotation>

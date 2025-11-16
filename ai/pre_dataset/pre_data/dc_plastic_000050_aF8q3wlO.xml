@@ -1,0 +1,33 @@
+<annotation>
+  <folder>dc</folder>
+  <filename>dc_plastic_000050_aF8q3wlO.jpg</filename>
+  <source>
+    <database>Unknown</database>
+    <annotation>Unknown</annotation>
+    <image>Unknown</image>
+  </source>
+  <size>
+    <width>3840</width>
+    <height>5120</height>
+    <depth></depth>
+  </size>
+  <segmented>0</segmented>
+  <object>
+    <name>plastic</name>
+    <truncated>0</truncated>
+    <occluded>0</occluded>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>665.5</xmin>
+      <ymin>414.34</ymin>
+      <xmax>3321.83</xmax>
+      <ymax>3442.77</ymax>
+    </bndbox>
+    <attributes>
+      <attribute>
+        <name>rotation</name>
+        <value>0.0</value>
+      </attribute>
+    </attributes>
+  </object>
+</annotation>

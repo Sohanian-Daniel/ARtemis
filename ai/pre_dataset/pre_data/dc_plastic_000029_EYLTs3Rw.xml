@@ -1,0 +1,33 @@
+<annotation>
+  <folder>dc</folder>
+  <filename>dc_plastic_000029_EYLTs3Rw.jpg</filename>
+  <source>
+    <database>Unknown</database>
+    <annotation>Unknown</annotation>
+    <image>Unknown</image>
+  </source>
+  <size>
+    <width>2448</width>
+    <height>3264</height>
+    <depth></depth>
+  </size>
+  <segmented>0</segmented>
+  <object>
+    <name>plastic</name>
+    <truncated>0</truncated>
+    <occluded>0</occluded>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>732.8</xmin>
+      <ymin>445.87</ymin>
+      <xmax>1721.15</xmax>
+      <ymax>2056.55</ymax>
+    </bndbox>
+    <attributes>
+      <attribute>
+        <name>rotation</name>
+        <value>0.0</value>
+      </attribute>
+    </attributes>
+  </object>
+</annotation>

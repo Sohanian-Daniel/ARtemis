@@ -73,3 +73,11 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+#ai things
+/ai/aci_ai/*
+/ai/venv*
+/ai/results/*
+/ai/post_dataset/*
+
+
