@@ -211,6 +211,118 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &866721448
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 866721450}
+  - component: {fileID: 866721449}
+  m_Layer: 0
+  m_Name: ProgressionManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &866721449
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 866721448}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7d20655050096945bb1b9bab0474115, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProgressionManager
+  achievements:
+  - name: Papermancer
+    description: Recycle 15 Paper Items
+    icon: {fileID: -7215298494019262123, guid: 215687feeab0b7445b4a1cd86c82c2e1, type: 3}
+    requiredProgress: 15
+    achievementData:
+      currentProgress: 0
+    eventContext:
+      rid: 4175396729592217686
+    achievementCondition:
+      rid: 4175396729592217687
+  - name: Glasstor
+    description: Recycle 15 Glass Items
+    icon: {fileID: 21300008, guid: 215687feeab0b7445b4a1cd86c82c2e1, type: 3}
+    requiredProgress: 15
+    achievementData:
+      currentProgress: 0
+    eventContext:
+      rid: 4175396729592217686
+    achievementCondition:
+      rid: 4175396729592217687
+  - name: Polymerizator
+    description: Recycle 15 Plastic Items
+    icon: {fileID: 8674190453677158122, guid: 215687feeab0b7445b4a1cd86c82c2e1, type: 3}
+    requiredProgress: 15
+    achievementData:
+      currentProgress: 0
+    eventContext:
+      rid: 4175396729592217686
+    achievementCondition:
+      rid: 4175396729592217687
+  - name: Collector
+    description: Unlock 3 achievements
+    icon: {fileID: 8289822419994577490, guid: 215687feeab0b7445b4a1cd86c82c2e1, type: 3}
+    requiredProgress: 3
+    achievementData:
+      currentProgress: 0
+    eventContext:
+      rid: 4175396729592217688
+    achievementCondition:
+      rid: -2
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 4175396729592217686
+      type: {class: OnRecycleEvent, ns: , asm: Assembly-CSharp}
+      data:
+        recycledMaterial: 0
+    - rid: 4175396729592217687
+      type: {class: MaterialCondition, ns: , asm: Assembly-CSharp}
+      data:
+        material: 2
+    - rid: 4175396729592217688
+      type: {class: AchievementUnlockedEvent, ns: , asm: Assembly-CSharp}
+      data:
+        achievementDefinition:
+          name: 
+          description: 
+          icon: {fileID: 0}
+          requiredProgress: 0
+          achievementData:
+            currentProgress: 0
+          eventContext:
+            rid: -2
+          achievementCondition:
+            rid: -2
+--- !u!4 &866721450
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 866721448}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 595.0443, y: 326.4667, z: 75.26869}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1045706093
 GameObject:
   m_ObjectHideFlags: 0
@@ -1006,3 +1118,4 @@ SceneRoots:
   - {fileID: 2099970469}
   - {fileID: 1505437102}
   - {fileID: 2122747814}
+  - {fileID: 866721450}
