@@ -77,10 +77,11 @@ crashlytics-build.properties
 #ai things
 /ai/aci_ai/*
 /ai/venv*
-/ai/results/*
 /ai/post_dataset/*
 /ai/post_dataset_taco/*
 
+ai/*.h5
+/ai/results/*
 /ai/pre_dataset/*
 /ai/data_taco/*
 /ai/config_temp/*
