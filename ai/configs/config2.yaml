@@ -1,0 +1,6 @@
+name: Unet_v2_CompoundLoss
+lr: 10e-5
+num_epochs: 75
+batch_size: 2
+optimizer: SGD
+loss: SegLossBias

@@ -1,5 +1,5 @@
 import os
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 
 import numpy as np
 import cv2
@@ -7,24 +7,46 @@ import pandas as pd
 from tqdm import tqdm
 import tensorflow as tf
 from tensorflow.keras.utils import CustomObjectScope
-from sklearn.metrics import f1_score, jaccard_score, precision_score, recall_score
-from metrics import dice_loss, dice_coef
-from train import load_dataset
+from sklearn.metrics import f1_score, jaccard_score, precision_score, recall_score, confusion_matrix
 import yaml
 import sys
 
-from ce_bias import CompoundLoss
-
-""" Global parameters """
+from train import load_dataset
+from metrics import dice_coef_multi, combined_loss, pixel_precision, per_class_precision
+from DicePerClass import DicePerClassMetric
+""" ---------------- GLOBAL PARAMETERS ---------------- """
 H = 256
 W = 256
 SEED = 42
 CONFIG_FILE_PATH = sys.argv[1]
 
+# ---------------- MASK COLORS ----------------
+# CLASS_COLORS = [
+#     (0, 0, 0),      # category 0 -> background (black)
+#     (0, 255, 0),    # category 1 -> green
+#     (0, 0, 255),    # category 3 -> red (BGR)
+#     (255, 255, 0),  # category 3 -> cyan
+# ]
+# Corrected CLASS_COLORS based on preprocess_taco.py
+CLASS_COLORS = [
+    (0, 0, 0),       # category 0 -> background (black)
+    (255, 0, 0),     # category 1 -> plastic (blue)
+    (0, 255, 0),     # category 2 -> paper (green)
+    (42, 42, 165),   # category 3 -> bio (brown)
+    (128, 128, 128), # category 4 -> metal (gray)
+    (0, 0, 255),     # category 5 -> other (red)
+]
+NUM_CLASSES = len(CLASS_COLORS)
+
+# ---------------- UTILITY FUNCTIONS ----------------
 def checkIfFolderExists(folderPath):
     if not os.path.isdir(folderPath):
         os.makedirs(folderPath)
         print(f"The folder '{folderPath}' has been created.")
+
+def create_dir(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
 
 def write_results_to_file(score, file_path):
     try:
@@ -37,116 +59,131 @@ def write_results_to_file(score, file_path):
     except Exception as e:
         print(f"An error occurred: {e}")
 
-def read_config(file_path):
-    with open(file_path, 'r') as file:
-        try:
-            return yaml.safe_load(file)
-        except yaml.YAMLError as exc:
-            print(f"Error reading YAML file: {exc}")
-            return None
-
-""" Creating a directory """
-def create_dir(path):
-    if not os.path.exists(path):
-        os.makedirs(path)
-
-def save_results(image, mask, y_pred, save_image_path):
-    mask = np.expand_dims(mask, axis=-1)
-    mask = np.concatenate([mask, mask, mask], axis=-1)
-
-    y_pred = np.expand_dims(y_pred, axis=-1)
-    y_pred = np.concatenate([y_pred, y_pred, y_pred], axis=-1)
-    y_pred = y_pred * 255
-
-    red_mask = mask * np.array([0, 0, 1], dtype=np.uint8)
-    green_pred = y_pred * np.array([0, 1, 0], dtype=np.uint8)
-    red_mask = red_mask.astype(image.dtype)
-    green_pred = green_pred.astype(image.dtype)
+# ---------------- MASK HANDLING ----------------
+def read_mask(path):
+    """Read a color mask and convert to one-hot and class indices"""
+    mask = cv2.imread(path, cv2.IMREAD_COLOR)
+    mask = cv2.resize(mask, (W, H), interpolation=cv2.INTER_NEAREST)
     
-    image_with_red_mask = cv2.addWeighted(image, 1.0, red_mask, 0.8, 0)
-    image_with_green_masks = cv2.addWeighted(image, 1.0, green_pred, 0.8, 0)
-    line = np.ones((H, 10, 3)) * 255
-    final_image = np.concatenate([image_with_red_mask, line, image_with_green_masks], axis=1) 
-    cv2.imwrite(save_image_path, final_image)
+    # Robust matching using Euclidean distance
+    diff = mask[:, :, np.newaxis, :] - np.array(CLASS_COLORS)[np.newaxis, np.newaxis, :, :]
+    dist = np.sum(np.square(diff), axis=-1)
+    class_mask = np.argmin(dist, axis=-1).astype(np.uint8)
 
-if __name__ == "__main__":
-    config_params = read_config(CONFIG_FILE_PATH)
-    if config_params == None:
+    one_hot = np.eye(NUM_CLASSES)[class_mask]
+    return one_hot.astype(np.float32), class_mask, mask
+
+def colorize_mask(mask_class_indices):
+    """Colorize the mask indices for visualization"""
+    mask_class_indices = mask_class_indices.astype(np.uint8)
+    color_mask = np.zeros((H, W, 3), dtype=np.uint8)
+    for idx, color in enumerate(CLASS_COLORS):
+        color_mask[mask_class_indices == idx] = color
+    return color_mask
+
+def save_results(image, mask_image, pred_class, save_image_path):
+    """Save a two-panel image: left = GT mask, right = prediction mask"""
+    left = cv2.addWeighted(image, 0.5, mask_image, 0.9, 0)
+    right = colorize_mask(pred_class)
+    separator = np.ones((H, 10, 3), dtype=np.uint8) * 255
+    combined = np.concatenate([left, separator, right], axis=1)
+    cv2.imwrite(save_image_path, combined)
+
+# ---------------- CONFIG & SEEDS ----------------
+config_params = None
+with open(CONFIG_FILE_PATH, 'r') as f:
+    try:
+        config_params = yaml.safe_load(f)
+    except yaml.YAMLError as exc:
+        print(f"Error reading YAML file: {exc}")
         raise Exception("Could not read the config file!")
+
+np.random.seed(SEED)
+tf.random.set_seed(SEED)
+
+# ---------------- LOAD MODEL ----------------
+create_dir("results")
+model_name = config_params["name"]
+model_file_path = os.path.join("results", model_name, f"{model_name}.h5")
+print(f"Using model: {model_file_path}")
+
+with CustomObjectScope({
+    "combined_loss": combined_loss,
+    "dice_coef_multi": dice_coef_multi,
+    "pixel_precision": pixel_precision,
+    "per_class_precision": per_class_precision,
+}):
+    model = tf.keras.models.load_model(model_file_path)
     
-    """ Seeding """
-    np.random.seed(SEED)
-    tf.random.set_seed(SEED)
 
-    """ Directory for storing files """
-    create_dir("results")
+print("Model loaded!")
 
-    """ Load the model """
-    model_name = config_params["name"]
-    model_file_path = os.path.join("results", model_name,  f"{model_name}.keras")
-    print(f"Using the model from {model_file_path}")
+# ---------------- LOAD DATASET ----------------
+dataset_path = "./post_dataset_taco"
+(train_x, train_y), (valid_x, valid_y), (test_x, test_y) = load_dataset(dataset_path)
 
-    loss_type = config_params["loss"]
-    if loss_type == "CompoundLoss":
-        loss_fn = CompoundLoss(CompoundLoss.BINARY_MODE)
-        with CustomObjectScope({"CompoundLoss": loss_fn}):
-            print("Loading model!")
-            model = tf.keras.models.load_model(model_file_path)
-    elif loss_type == "DiceLoss":
-        with CustomObjectScope({"dice_coef": dice_coef, "dice_loss": dice_loss}):
-            print("Loading model!")
-            model = tf.keras.models.load_model(model_file_path)
-    else:
-        raise Exception("No loss mode was found!")
+#test_x = test_x + train_x + valid_x
+#test_y = test_y + train_y + valid_y
 
-    print("Done loading the model!")
-    
-    """ Dataset """
-    dataset_path = "./post_dataset"
-    (train_x, train_y), (valid_x, valid_y), (test_x, test_y) = load_dataset(dataset_path)
 
-    """ Prediction and Evaluation """
-    SCORE = []
-    checkIfFolderExists(os.path.join("results", f"{model_name}", "images"))
-    for x, y in tqdm(zip(test_x, test_y), total=len(test_y)):
-        """ Extracting the name """
-        name = x.split("/")[-1]
+# ---------------- PREDICTION & METRICS ----------------
+SCORE = []
+save_dir = os.path.join("results", model_name, "images")
+checkIfFolderExists(save_dir)
+total_cm = np.zeros((NUM_CLASSES, NUM_CLASSES))
 
-        """ Reading the image """
-        image = cv2.imread(x, cv2.IMREAD_COLOR) ## [H, w, 3]
-        image = cv2.resize(image, (W, H))       ## [H, w, 3]
-        x = image/255.0                         ## [H, w, 3]
-        x = np.expand_dims(x, axis=0)           ## [1, H, w, 3]
+for x_path, y_path in tqdm(zip(test_x, test_y), total=len(test_y)):
+    name = os.path.basename(x_path)
 
-        """ Reading the mask """
-        mask = cv2.imread(y, cv2.IMREAD_GRAYSCALE)
-        mask = cv2.resize(mask, (W, H))
+    # Read image
+    image = cv2.imread(x_path, cv2.IMREAD_COLOR)
+    image_resized = cv2.resize(image, (W, H))
+    x_input = np.expand_dims(image_resized / 255.0, axis=0)
 
-        """ Prediction """
-        y_pred = model.predict(x, verbose=0)[0]
-        y_pred = np.squeeze(y_pred, axis=-1)
-        y_pred = y_pred >= 0.5
-        y_pred = y_pred.astype(np.int32)
+    # Read mask
+    mask_onehot, mask_class, mask_image = read_mask(y_path)
 
-        """ Saving the prediction """
-        save_image_path = os.path.join("results", f"{model_name}", "images", name)
-        save_results(image, mask, y_pred, save_image_path)
+    # Predict
+    y_pred = model.predict(x_input, verbose=0)[0]  # [H, W, num_classes]
 
-        """ Flatten the array """
-        mask = mask/255.0
-        mask = (mask > 0.5).astype(np.int32).flatten()
-        y_pred = y_pred.flatten()
+    pred_class = np.argmax(y_pred, axis=-1)
 
-        """ Calculating the metrics values """
-        f1_value = f1_score(mask, y_pred, labels=[0, 1], average="binary")
-        jac_value = jaccard_score(mask, y_pred, labels=[0, 1], average="binary")
-        recall_value = recall_score(mask, y_pred, labels=[0, 1], average="binary", zero_division=0)
-        precision_value = precision_score(mask, y_pred, labels=[0, 1], average="binary", zero_division=0)
-        SCORE.append([name, f1_value, jac_value, recall_value, precision_value])
+    unique_gt = np.unique(mask_class)
+    unique_pred = np.unique(pred_class)
+    tqdm.write(f"Image: {name} | GT Classes: {unique_gt} | Pred Classes: {unique_pred}")
 
-    """ Metrics values """
-    score = [s[1:]for s in SCORE]
-    score = np.mean(score, axis=0)
-    write_results_to_file(score, os.path.join("results", config_params["name"], "final_score.txt"))
-    df = pd.DataFrame(SCORE, columns=["Image", "F1", "Jaccard", "Recall", "Precision"])
-    df.to_csv(f"results/{model_name}/testing_score.csv")
+    # Save overlay results
+    save_image_path = os.path.join(save_dir, name)
+    save_results(image_resized, mask_image, pred_class, save_image_path)
+
+    # Flatten for metrics
+    mask_flat = mask_class.flatten()
+    pred_flat = pred_class.flatten()
+    valid_labels = np.unique(mask_flat)  # compute metrics only for present classes
+
+    f1_value = f1_score(mask_flat, pred_flat, average='macro', labels=valid_labels, zero_division=0)
+    jac_value = jaccard_score(mask_flat, pred_flat, average='macro', labels=valid_labels, zero_division=0)
+    recall_value = recall_score(mask_flat, pred_flat, average='macro', labels=valid_labels, zero_division=0)
+    precision_value = precision_score(mask_flat, pred_flat, average='macro', labels=valid_labels, zero_division=0)
+
+    # Update Confusion Matrix
+    total_cm += confusion_matrix(mask_flat, pred_flat, labels=range(NUM_CLASSES))
+
+    SCORE.append([name, f1_value, jac_value, recall_value, precision_value])
+
+# ---------------- SAVE METRICS ----------------
+score_mean = np.mean([s[1:] for s in SCORE], axis=0)
+write_results_to_file(score_mean, os.path.join("results", model_name, "final_score.txt"))
+
+df = pd.DataFrame(SCORE, columns=["Image", "F1", "Jaccard", "Recall", "Precision"])
+df.to_csv(os.path.join("results", model_name, "testing_score.csv"), index=False)
+
+print("\n--- Confusion Matrix (Rows: GT, Cols: Pred) ---")
+print(total_cm.astype(int))
+
+# Calculate accuracy per class from CM
+class_acc = np.diag(total_cm) / (total_cm.sum(axis=1) + 1e-7)
+for idx, acc in enumerate(class_acc):
+    print(f"Class {idx} Accuracy: {acc:.4f}")
+
+print("Testing completed!")

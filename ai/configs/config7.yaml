@@ -1,0 +1,10 @@
+name: Unet_v15_FocalLoss_TACO
+batch_size: 2
+lr: 1e-4
+num_epochs: 50
+optimizer: Adam
+loss: CombinedLoss
+augmentation:
+  flip: horizontal and vertical
+  rotation: 30.0
+  zoom: true

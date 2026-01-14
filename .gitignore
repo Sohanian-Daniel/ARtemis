@@ -79,5 +79,9 @@ crashlytics-build.properties
 /ai/venv*
 /ai/results/*
 /ai/post_dataset/*
+/ai/post_dataset_taco/*
 
-
+/ai/pre_dataset/*
+/ai/data_taco/*
+/ai/config_temp/*
+/TACO/*

@@ -1,0 +1,5 @@
+name: Unet_v4_CompoundLoss_TACO
+lr: 1e-4
+num_epochs: 50
+batch_size: 2
+optimizer: SGD
