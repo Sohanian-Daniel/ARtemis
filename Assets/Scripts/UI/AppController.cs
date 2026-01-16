@@ -9,7 +9,7 @@ public class AppController : MonoBehaviour
     public static AppController Instance;
 
     // Reference to the ML Classifier to be used throughout the app
-    public Classifier classifier;
+    public BaseClassifier classifier;
 
     public float fetchInterval = 1.0f; // Interval in seconds to fetch classifier results
 
@@ -42,9 +42,12 @@ public class AppController : MonoBehaviour
             // Get camera feed texture
             Texture2D cameraTexture = CameraTextureProvider.Instance.GetTexture();
 
-            List<ClassificationResult> results = classifier.Classify(cameraTexture);
+            if (cameraTexture != null && classifier != null)
+            {
+                List<ClassificationResult> results = classifier.Classify(cameraTexture);
 
-            UpdateUI(results);
+                UpdateUI(results);
+            }
 
             yield return new WaitForSeconds(fetchInterval);
         }
@@ -65,7 +68,7 @@ public class AppController : MonoBehaviour
             GameObject displayObj = Instantiate(objectDisplayPrefab, this.transform);
             ObjectDisplay display = displayObj.GetComponent<ObjectDisplay>();
 
-            display.Initialize(result.Material, result.Confidence, result.BoundingBox);
+            display.Initialize(result);
 
             activeDisplays.Add(displayObj);
         }

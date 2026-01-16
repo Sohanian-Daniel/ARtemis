@@ -211,6 +211,201 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+<<<<<<< Updated upstream
+=======
+--- !u!1 &767017145
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 767017148}
+  - component: {fileID: 767017147}
+  - component: {fileID: 767017146}
+  m_Layer: 5
+  m_Name: RawImage
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &767017146
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 767017145}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Texture: {fileID: 0}
+  m_UVRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+--- !u!222 &767017147
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 767017145}
+  m_CullTransparentMesh: 1
+--- !u!224 &767017148
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 767017145}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2099970469}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 282, y: 182}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &866721448
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 866721450}
+  - component: {fileID: 866721449}
+  m_Layer: 0
+  m_Name: ProgressionManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &866721449
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 866721448}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7d20655050096945bb1b9bab0474115, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProgressionManager
+  achievements:
+  - name: Papermancer
+    description: Recycle 15 Paper Items
+    icon: {fileID: -7215298494019262123, guid: 215687feeab0b7445b4a1cd86c82c2e1, type: 3}
+    requiredProgress: 15
+    achievementData:
+      currentProgress: 0
+    eventContext:
+      rid: 4175396729592217686
+    achievementCondition:
+      rid: 4175396786414551118
+  - name: Metalurgy
+    description: Recycle 15 Metal Items
+    icon: {fileID: -1856732651501631057, guid: 215687feeab0b7445b4a1cd86c82c2e1, type: 3}
+    requiredProgress: 15
+    achievementData:
+      currentProgress: 0
+    eventContext:
+      rid: 4175396729592217686
+    achievementCondition:
+      rid: 4175396729592217687
+  - name: Polymerizator
+    description: Recycle 15 Plastic Items
+    icon: {fileID: 8674190453677158122, guid: 215687feeab0b7445b4a1cd86c82c2e1, type: 3}
+    requiredProgress: 15
+    achievementData:
+      currentProgress: 0
+    eventContext:
+      rid: 4175396729592217686
+    achievementCondition:
+      rid: 4175396786414551117
+  - name: Collector
+    description: Unlock 3 achievements
+    icon: {fileID: 8289822419994577490, guid: 215687feeab0b7445b4a1cd86c82c2e1, type: 3}
+    requiredProgress: 3
+    achievementData:
+      currentProgress: 0
+    eventContext:
+      rid: 4175396729592217688
+    achievementCondition:
+      rid: -2
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 4175396729592217686
+      type: {class: OnRecycleEvent, ns: , asm: Assembly-CSharp}
+      data:
+        recycledMaterial: 0
+    - rid: 4175396729592217687
+      type: {class: MaterialCondition, ns: , asm: Assembly-CSharp}
+      data:
+        material: 4
+    - rid: 4175396729592217688
+      type: {class: AchievementUnlockedEvent, ns: , asm: Assembly-CSharp}
+      data:
+        achievementDefinition:
+          name: 
+          description: 
+          icon: {fileID: 0}
+          requiredProgress: 0
+          achievementData:
+            currentProgress: 0
+          eventContext:
+            rid: -2
+          achievementCondition:
+            rid: -2
+    - rid: 4175396786414551117
+      type: {class: MaterialCondition, ns: , asm: Assembly-CSharp}
+      data:
+        material: 2
+    - rid: 4175396786414551118
+      type: {class: MaterialCondition, ns: , asm: Assembly-CSharp}
+      data:
+        material: 1
+--- !u!4 &866721450
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 866721448}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 595.0443, y: 326.4667, z: 75.26869}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+>>>>>>> Stashed changes
 --- !u!1 &1045706093
 GameObject:
   m_ObjectHideFlags: 0
@@ -780,6 +975,8 @@ GameObject:
   - component: {fileID: 2099970466}
   - component: {fileID: 2099970471}
   - component: {fileID: 2099970470}
+  - component: {fileID: 2099970472}
+  - component: {fileID: 2099970473}
   m_Layer: 5
   m_Name: UI
   m_TagString: Untagged
@@ -861,7 +1058,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 767017148}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -876,11 +1074,18 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2099970465}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7347f8e47615f6a4d840b28549a73965, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Classifier
+  modelAsset: {fileID: 5022602860645237092, guid: f419f2f76fd57ef49a9981a97219ffca, type: 3}
+  backendType: 256
+  normalizeInput: 1
+  colorTolerance: 0.2
+  minimumAlpha: 0.1
+  generateMaskVisualization: 1
+  maskDisplay: {fileID: 767017146}
 --- !u!114 &2099970471
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -893,9 +1098,43 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 230b71b2136f98342b35fa93598830d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AppController
-  classifier: {fileID: 2099970470}
+  classifier: {fileID: 2099970473}
   fetchInterval: 1
   objectDisplayPrefab: {fileID: 411565714973882685, guid: 2b6e7a7514a2481418006001bcafe25f, type: 3}
+--- !u!114 &2099970472
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2099970465}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1de55de9def803e47b255262d9bd7339, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::YOLOClassifier
+  modelAsset: {fileID: 5022602860645237092, guid: d41ffec4d4bbdc04b82f4f6679733621, type: 3}
+  backendType: 256
+  confidenceThreshold: 0.15
+  iouThreshold: 0.1
+  INPUT_SIZE: 640
+--- !u!114 &2099970473
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2099970465}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c5956074712b114b9be6845aa68352f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::YOLOPostNMSClassifier
+  modelAsset: {fileID: 5022602860645237092, guid: a351568bd11a40d44957b6dafeaf81b3, type: 3}
+  backendType: 256
+  confidenceThreshold: 0.15
+  iouThreshold: 0.45
+  INPUT_SIZE: 640
 --- !u!1 &2122747809
 GameObject:
   m_ObjectHideFlags: 0
