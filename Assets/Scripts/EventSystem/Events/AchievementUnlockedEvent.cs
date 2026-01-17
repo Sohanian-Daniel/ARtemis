@@ -1,4 +1,4 @@
-﻿class AchievementUnlockedEvent : EventContext
+﻿public class AchievementUnlockedEvent : EventContext
 {
     public Achievement achievementDefinition;
 

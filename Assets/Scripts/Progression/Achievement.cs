@@ -10,6 +10,7 @@ public class Achievement
     public Sprite icon;
 
     public uint requiredProgress;
+    public uint currentProgress => achievementData.currentProgress;
 
     public AchievementProgressData achievementData;
 
@@ -54,12 +55,6 @@ public class Achievement
         if (isUnlocked)
             return;
 
-        //if (m_Unlockable != null)
-        {
-            //m_Unlockable.Unlock();
-
-            //string message = $"Completed {name}\n\"{m_AdvancementDescription}\"";
-            //GameHandler.Instance.DisplayUIMessage(message, 5f);
-        }
+        EventManager.GetEvent<AchievementUnlockedEvent>().Invoke(new AchievementUnlockedEvent(this));
     }
 }

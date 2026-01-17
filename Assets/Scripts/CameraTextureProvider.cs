@@ -66,8 +66,7 @@ public class CameraTextureProvider : MonoBehaviour
         {
             inputRect = new RectInt(0, 0, cpuImage.width, cpuImage.height),
             outputDimensions = new Vector2Int(cpuImage.width, cpuImage.height),
-            outputFormat = TextureFormat.RGBA32,
-            transformation = XRCpuImage.Transformation.MirrorY
+            outputFormat = TextureFormat.RGBA32
         };
 
         int bufferSize = cpuImage.GetConvertedDataSize(conversionParams);

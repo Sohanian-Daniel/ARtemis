@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,17 +11,30 @@ public class ObjectDisplay : MonoBehaviour
 
     public TextMeshProUGUI label;
     public GameObject boxVisual; // Visual representation of the bounding box (1x1 unit square)
+    public Button clickButton;
 
-    public void Initialize(ClassificationResult result)
+    public void Initialize(ClassificationResult result, Action onClick = null)
     {
         materialType = result.Material;
         confidence = result.Confidence;
         boundingBox = result.BoundingBox;
         label.text = result.ClassName + $" ({confidence:P1})";
 
+        if (onClick != null && clickButton != null)
+        {
+            clickButton.onClick.AddListener(() => onClick());
+        }
 
         // Update visual representation based on material type and confidence
         UpdateDisplay();
+    }
+
+    private void OnDisable()
+    {
+        if (clickButton != null)
+        {
+            clickButton.onClick.RemoveAllListeners();
+        }
     }
 
     private void UpdateDisplay()
@@ -29,7 +43,7 @@ public class ObjectDisplay : MonoBehaviour
 
         Canvas canvas = GetComponentInParent<Canvas>();
         RectTransform canvasRect = canvas.GetComponent<RectTransform>();
-        Vector2 canvasSize = canvasRect.rect.size;
+        Vector2 displaySize = ARFeedToRawImage.Instance.targetRawImage.rectTransform.rect.size;
 
         if (boxVisual != null)
         {
@@ -41,10 +55,10 @@ public class ObjectDisplay : MonoBehaviour
                 //float height = boundingBox.height * canvasSize.y;
 
                 // For YOLO Classifier
-                float centerX = (boundingBox.x - 0.5f) * -canvasSize.x;
-                float centerY = (boundingBox.y - 0.5f) * canvasSize.y;
-                float width = boundingBox.width * canvasSize.x;
-                float height = boundingBox.height * canvasSize.y;
+                float centerX = (boundingBox.x - 0.5f) * displaySize.x;
+                float centerY = (boundingBox.y - 0.5f) * displaySize.y;
+                float width = boundingBox.width * displaySize.x;
+                float height = boundingBox.height * displaySize.y;
 
                 boxRect.anchoredPosition = new Vector2(centerX, centerY);
                 boxRect.sizeDelta = new Vector2(width, height);

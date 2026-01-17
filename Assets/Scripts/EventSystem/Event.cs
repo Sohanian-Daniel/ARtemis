@@ -104,7 +104,7 @@ public class Event<T> : IEvent where T : EventContext
     }
 
     // Invokes
-    public void Invoke(T eventContext, bool invokeGlobal = true)
+    public void Invoke(T eventContext, bool invokeGlobal = false)
     {
         for (int i = 0; i < (int)Priority.COUNT; i++)
         {
@@ -126,7 +126,7 @@ public class Event<T> : IEvent where T : EventContext
         }
     }
 
-    public void InvokeExcluding(T eventContext, Priority excludedPriority, bool invokeGlobal = true)
+    public void InvokeExcluding(T eventContext, Priority excludedPriority, bool invokeGlobal = false)
     {
         for (int i = 0; i < (int)Priority.COUNT; i++)
         {
@@ -151,7 +151,7 @@ public class Event<T> : IEvent where T : EventContext
         }
     }
 
-    public void InvokeOnly(T eventContext, Priority includedPriority, bool invokeGlobal = true)
+    public void InvokeOnly(T eventContext, Priority includedPriority, bool invokeGlobal = false)
     {
         var length = events[(int)includedPriority].Count;
         if (length == 0)

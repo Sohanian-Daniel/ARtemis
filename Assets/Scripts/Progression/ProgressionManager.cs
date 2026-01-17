@@ -12,6 +12,7 @@ public class AchievementProgressData
 [Serializable]
 public class ProgressionData
 {
+    public int userPoints = 0;
     public Dictionary<string, AchievementProgressData> achievementData = new();
 }
 
@@ -25,6 +26,12 @@ public class ProgressionManager : MonoBehaviour
     public static ProgressionData progressionData;
 
     public List<Achievement> achievements = new();
+
+    public int userPoints
+    {
+        get { return progressionData.userPoints; }
+        set { progressionData.userPoints = value; }
+    }
 
     private void Awake()
     {
@@ -42,6 +49,28 @@ public class ProgressionManager : MonoBehaviour
         }
 
         Debug.Log("ProgressionManager Awake");
+
+        EventManager.GetEvent<OnRecycleEvent>().AddListener((e) =>
+        {
+            userPoints += e.recycledItem.Value;
+            Debug.Log($"User recycled {e.recycledMaterial}, gained {e.recycledItem.Value} points. Total points: {userPoints}");
+        });
+    }
+
+    private void OnEnable()
+    {
+        foreach (var achievement in achievements)
+        {
+            achievement.Subscribe();
+        }
+    }
+
+    private void OnDisable()
+    {
+        foreach (var achievement in achievements)
+        {
+            achievement.Unsubscribe();
+        }
     }
 
     public void LoadProgression()
@@ -93,6 +122,8 @@ public class ProgressionManager : MonoBehaviour
                 progressionData.achievementData.Add(achievement.name, data);
             }
         }
+
+        progressionData.userPoints = Instance.userPoints; // Double-check user points are up to date
 
         string json = JsonConvert.SerializeObject(progressionData, Formatting.Indented);
 
