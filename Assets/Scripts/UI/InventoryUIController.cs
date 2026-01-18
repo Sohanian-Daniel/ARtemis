@@ -59,8 +59,15 @@ public class InventoryUIController : MonoBehaviour
         }
     }
 
+    private bool isCheckingOut = false;
     public void CheckoutItems()
     {
+        if (isCheckingOut)
+        {
+            return;
+        }
+
+        // Prevent multiple checkouts at the same time by checking if a coroutine is already running
         StartCoroutine(CheckoutItemsCoroutine());
     }
 
@@ -68,28 +75,41 @@ public class InventoryUIController : MonoBehaviour
     {
         // Step 1: Disable the layout group to prevent UI updates during the process
         contentLayoutGroup.enabled = false;
+        isCheckingOut = true;
 
         // Step 2: For each item, scroll and fade it out to the right of the screen
         // When the operation is complete, checkout re-enable the layout group to move the remaining items up
+
+        // Since below we are destroying items while iterating we collect them first to not mess up Unity's internal child struct
+        List<ItemUIDisplay> itemsToRemove = new();
         foreach (Transform child in contentUIParent)
         {
             if (child.TryGetComponent<ItemUIDisplay>(out var itemUIController))
             {
-                child.transform.DOMoveX(Screen.width + 100, 0.5f).SetEase(Ease.InBack).OnComplete(() =>
-                {
-                    Destroy(child.gameObject);
-
-                    Inventory.Instance.CheckoutItem(itemUIController.item);
-                });
-
-                yield return new WaitForSeconds(0.1f);
+                itemsToRemove.Add(itemUIController);
             }
+        }
+
+        var itemWidth = itemsToRemove[0].GetComponent<RectTransform>().rect.width;
+
+        foreach (ItemUIDisplay item in itemsToRemove)
+        {
+            item.transform.DOMoveX(Screen.width + itemWidth + 100, 0.5f).SetEase(Ease.InBack);
+            yield return new WaitForSeconds(0.1f);
         }
 
         // Make sure all items are processed before re-enabling the layout group
         yield return new WaitForSeconds(0.5f);
 
+        // Destroy all item UI elements
+        foreach (var item in itemsToRemove)
+        {
+            Inventory.Instance.CheckoutItem(item.item);
+            Destroy(item.gameObject);
+        }
+
         contentLayoutGroup.enabled = true;
+        isCheckingOut = false;
 
         yield return null;
     }

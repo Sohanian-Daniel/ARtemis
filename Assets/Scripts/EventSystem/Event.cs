@@ -115,7 +115,7 @@ public class Event<T> : IEvent where T : EventContext
             var span = events[i];
             for (int j = 0; j < length; j++)
             {
-                span[j](eventContext);
+                span[j]?.Invoke(eventContext);
             }
         }
 

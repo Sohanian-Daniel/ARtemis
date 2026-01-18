@@ -18,28 +18,15 @@ public class AppController : MonoBehaviour
     public GameObject objectDisplayPrefab;
     private List<GameObject> activeDisplays = new List<GameObject>();
 
-    public Button deepScanButton;
     public RawImage frozenCameraImageUI;
 
     private Texture2D frozenCameraTexture;
-
-    public Button finishScanButton;
 
     private Camera mainCamera;
 
 
     private void Awake()
     {
-        if (deepScanButton == null)
-        {
-            Debug.LogWarning("Deep Scan button reference is missing!");
-        }
-
-        if (finishScanButton == null)
-        {
-            Debug.LogWarning("Finish Scan button reference is missing!");
-        }
-
         if (Instance == null)
         {
             Instance = this;
@@ -50,50 +37,65 @@ public class AppController : MonoBehaviour
             Destroy(gameObject);
         }
 
-        deepScanButton.onClick.AddListener(Deepscan);
-
-        finishScanButton.onClick.AddListener(() =>
-        {
-            frozenCameraImageUI.gameObject.SetActive(false);
-            finishScanButton.gameObject.SetActive(false);
-
-            // Clear deep scan UI elements
-            UpdateUI(new List<ClassificationResult>(), allowInteractions: false);
-
-            // Resume regular fetching of results
-            StartCoroutine(FetchClassifierResults());
-        });
-
         mainCamera = Camera.main;
+
+        // Prefer a higher frame rate for smoother AR experience
+        Application.targetFrameRate = 120;
     }
 
     private void Start()
     {
+        StartClassification();
+    }
+
+    public void StartClassification()
+    {
+        StopAllCoroutines();
+
+        mainCamera.enabled = true;
+
+        // Clear deep scan UI elements
+        UpdateUI(new List<ClassificationResult>(), allowInteractions: false);
+
+        // Resume regular fetching of results
         StartCoroutine(FetchClassifierResults());
     }
 
-    private void Deepscan()
+    public void StopClassification()
+    {
+        mainCamera.enabled = false;
+
+        UpdateUI(new List<ClassificationResult>(), allowInteractions: false);
+        StopAllCoroutines();
+    }
+
+    public void Deepscan()
     {
         // Capture current camera frame
-        Texture2D cameraTexture = CameraTextureProvider.Instance.GetTexture();
-
-        if (cameraTexture != null && deepClassifier != null)
+        Texture2D cameraTexture = ARFeedToRawImage.Instance.GetTexture2D();
+        if (cameraTexture == null)
         {
-            StopAllCoroutines(); // Stop regular fetching of results
-
-            frozenCameraTexture = new Texture2D(cameraTexture.width, cameraTexture.height, TextureFormat.RGB24, false);
-            frozenCameraTexture.SetPixels32(cameraTexture.GetPixels32());
-            frozenCameraTexture.Apply();
-
-            frozenCameraImageUI.texture = frozenCameraTexture;
-            frozenCameraImageUI.gameObject.SetActive(true);
-
-            // Reveal done button
-            finishScanButton.gameObject.SetActive(true);
-
-            List<ClassificationResult> results = deepClassifier.Classify(frozenCameraTexture);
-            UpdateUI(results, allowInteractions: true); // Allow interactions in deep scan mode (to add to inventory)
+            Debug.LogWarning("Camera texture is null, cannot perform deep scan.");
+            return;
         }
+
+        if (deepClassifier == null)
+        {
+            Debug.LogWarning("Deep classifier is not assigned.");
+            return;
+        }
+
+        StopClassification();
+
+        // Copy the camera texture to freeze the image
+        Texture2D frozenCameraTexture = new Texture2D(cameraTexture.width, cameraTexture.height, TextureFormat.RGB24, false);
+        frozenCameraTexture.SetPixels32(cameraTexture.GetPixels32());
+        frozenCameraTexture.Apply();
+
+        frozenCameraImageUI.texture = frozenCameraTexture;
+
+        List<ClassificationResult> results = deepClassifier.Classify(frozenCameraTexture);
+        UpdateUI(results, allowInteractions: true); // Allow interactions in deep scan mode (to add to inventory)
     }
 
     private void OnSelectItem(ObjectDisplay display, ClassificationResult result)
@@ -110,6 +112,8 @@ public class AppController : MonoBehaviour
         });
 
         Inventory.Instance.AddItem(result);
+
+        EventManager.GetEvent<OnItemSelectedEvent>().Invoke(new OnItemSelectedEvent(result));
     }
 
     private IEnumerator FetchClassifierResults()
@@ -118,7 +122,7 @@ public class AppController : MonoBehaviour
         while (true)
         {
             // Get camera feed texture
-            Texture2D cameraTexture = CameraTextureProvider.Instance.GetTexture();
+            Texture2D cameraTexture = ARFeedToRawImage.Instance.GetTexture2D();
 
             if (cameraTexture != null && classifier != null)
             {

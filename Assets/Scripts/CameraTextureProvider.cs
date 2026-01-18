@@ -34,57 +34,58 @@ public class CameraTextureProvider : MonoBehaviour
         }
     }
 
-    public Texture2D GetTexture()
-    {
-        return cameraTexture;
-    }
+    //public Texture2D GetTexture()
+    //{
+    //    Texture cameraTexture = ARFeedToRawImage.Instance.targetRawImage.texture;
+    //    return cameraTexture as Texture2D;
+    //}
 
-    private void OnEnable()
-    {
-        cameraManager.frameReceived += OnCameraFrameReceived;
-    }
+    //private void OnEnable()
+    //{
+    //    cameraManager.frameReceived += OnCameraFrameReceived;
+    //}
 
-    private void OnDisable()
-    {
-        cameraManager.frameReceived -= OnCameraFrameReceived;
-    }
+    //private void OnDisable()
+    //{
+    //    cameraManager.frameReceived -= OnCameraFrameReceived;
+    //}
 
-    private void OnCameraFrameReceived(ARCameraFrameEventArgs args)
-    {
-        if (!cameraManager.TryAcquireLatestCpuImage(out XRCpuImage cpuImage))
-            return;
+    //private void OnCameraFrameReceived(ARCameraFrameEventArgs args)
+    //{
+    //    if (!cameraManager.TryAcquireLatestCpuImage(out XRCpuImage cpuImage))
+    //        return;
 
-        // Convert the AR camera frame to a Texture2D
-        UpdateTexture(ref cameraTexture, cpuImage);
+    //    // Convert the AR camera frame to a Texture2D
+    //    UpdateTexture(ref cameraTexture, cpuImage);
 
-        cpuImage.Dispose();
-    }
+    //    cpuImage.Dispose();
+    //}
 
-    private void UpdateTexture(ref Texture2D texture, XRCpuImage cpuImage)
-    {
-        var conversionParams = new XRCpuImage.ConversionParams
-        {
-            inputRect = new RectInt(0, 0, cpuImage.width, cpuImage.height),
-            outputDimensions = new Vector2Int(cpuImage.width, cpuImage.height),
-            outputFormat = TextureFormat.RGBA32
-        };
+    //private void UpdateTexture(ref Texture2D texture, XRCpuImage cpuImage)
+    //{
+    //    var conversionParams = new XRCpuImage.ConversionParams
+    //    {
+    //        inputRect = new RectInt(0, 0, cpuImage.width, cpuImage.height),
+    //        outputDimensions = new Vector2Int(cpuImage.width, cpuImage.height),
+    //        outputFormat = TextureFormat.RGBA32
+    //    };
 
-        int bufferSize = cpuImage.GetConvertedDataSize(conversionParams);
+    //    int bufferSize = cpuImage.GetConvertedDataSize(conversionParams);
 
-        // Allocate or resize texture buffer
-        var buffer = new NativeArray<byte>(bufferSize, Allocator.Temp);
+    //    // Allocate or resize texture buffer
+    //    var buffer = new NativeArray<byte>(bufferSize, Allocator.Temp);
 
-        cpuImage.Convert(conversionParams, buffer);
+    //    cpuImage.Convert(conversionParams, buffer);
 
-        // Create texture if necessary
-        if (texture == null || texture.width != cpuImage.width || texture.height != cpuImage.height)
-        {
-            texture = new Texture2D(cpuImage.width, cpuImage.height, TextureFormat.RGBA32, false);
-        }
+    //    // Create texture if necessary
+    //    if (texture == null || texture.width != cpuImage.width || texture.height != cpuImage.height)
+    //    {
+    //        texture = new Texture2D(cpuImage.width, cpuImage.height, TextureFormat.RGBA32, false);
+    //    }
 
-        texture.LoadRawTextureData(buffer);
-        texture.Apply();
+    //    texture.LoadRawTextureData(buffer);
+    //    texture.Apply();
 
-        buffer.Dispose();
-    }
+    //    buffer.Dispose();
+    //}
 }

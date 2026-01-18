@@ -13,6 +13,7 @@ public class AchievementProgressData
 public class ProgressionData
 {
     public int userPoints = 0;
+    public int totalItemsRecycled = 0;
     public Dictionary<string, AchievementProgressData> achievementData = new();
 }
 
@@ -31,6 +32,12 @@ public class ProgressionManager : MonoBehaviour
     {
         get { return progressionData.userPoints; }
         set { progressionData.userPoints = value; }
+    }
+
+    public int totalItemsRecycled
+    {
+        get { return progressionData.totalItemsRecycled; }
+        set { progressionData.totalItemsRecycled = value; }
     }
 
     private void Awake()
@@ -53,6 +60,7 @@ public class ProgressionManager : MonoBehaviour
         EventManager.GetEvent<OnRecycleEvent>().AddListener((e) =>
         {
             userPoints += e.recycledItem.Value;
+            totalItemsRecycled += 1;
             Debug.Log($"User recycled {e.recycledMaterial}, gained {e.recycledItem.Value} points. Total points: {userPoints}");
         });
     }
@@ -100,6 +108,7 @@ public class ProgressionManager : MonoBehaviour
             // If the advancement data does not exist, skip it
             if (!progressionData.achievementData.ContainsKey(achievement.name))
             {
+                achievement.achievementData = new AchievementProgressData();
                 continue;
             }
 
@@ -124,10 +133,20 @@ public class ProgressionManager : MonoBehaviour
         }
 
         progressionData.userPoints = Instance.userPoints; // Double-check user points are up to date
+        progressionData.totalItemsRecycled = Instance.totalItemsRecycled; // Double-check total items recycled are up to date
 
         string json = JsonConvert.SerializeObject(progressionData, Formatting.Indented);
 
         System.IO.File.WriteAllText(savePath, json);
+    }
+
+    public void ResetProgression()
+    {
+        progressionData = new ProgressionData();
+        string json = JsonConvert.SerializeObject(progressionData, Formatting.Indented);
+        System.IO.File.WriteAllText(savePath, json);
+
+        Instance.LoadProgression();
     }
 
     private void OnDestroy()

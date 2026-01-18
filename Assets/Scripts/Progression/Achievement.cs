@@ -20,10 +20,16 @@ public class Achievement
     [SerializeReference, SubclassSelector]
     public AchievementCondition achievementCondition;
 
-    public bool isUnlocked => achievementData.currentProgress >= requiredProgress;
+    public bool isUnlocked = false;
 
     public void Subscribe()
     {
+        if (currentProgress >= requiredProgress)
+        {
+            isUnlocked = true;
+            return;
+        }
+
         EventManager.GetEvent(eventContext.GetType()).AddListener(OnEventCallback, Priority.None);
     }
 
@@ -55,6 +61,7 @@ public class Achievement
         if (isUnlocked)
             return;
 
+        isUnlocked = true;
         EventManager.GetEvent<AchievementUnlockedEvent>().Invoke(new AchievementUnlockedEvent(this));
     }
 }

@@ -30,9 +30,25 @@ public class ARFeedToRawImage : MonoBehaviour
             arCamera = Camera.main;
         }
 
-        rt = new RenderTexture(Screen.width, Screen.height, 1);
+        rt = new RenderTexture((int) targetRawImage.rectTransform.rect.width, (int) targetRawImage.rectTransform.rect.height, 1);
         arCamera.targetTexture = rt;
         targetRawImage.texture = rt;
+    }
+
+    private Texture2D textureCache = null;
+
+    public Texture2D GetTexture2D()
+    {
+        if (textureCache == null)
+        {
+            textureCache = new Texture2D(rt.width, rt.height, TextureFormat.RGB24, false);
+        }
+
+        RenderTexture.active = rt;
+        textureCache.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0);
+        textureCache.Apply();
+
+        return textureCache;
     }
 
     void OnDestroy()
