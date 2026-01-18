@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
@@ -11,6 +11,8 @@ public class ItemUIDisplay : MonoBehaviour
     public TextMeshProUGUI valueLabel;
     public Image itemIconImage;
 
+    public Item item;
+
     public void Initialize(Item item, Sprite itemSprite)
     {
         // Feel free to customize this based on your Item class structure
@@ -20,5 +22,6 @@ public class ItemUIDisplay : MonoBehaviour
         valueLabel.text = item.Value.ToString();
 
         itemIconImage.sprite = itemSprite;
+        this.item = item;
     }
 }

@@ -39,21 +39,26 @@ public class Inventory : MonoBehaviour
     }
 
     // Confirm and process the items from inventory and actually grant the rewards
-    public void Checkout()
+    public void CheckoutItem(Item item)
     {
-        var onRecycleEvent = EventManager.GetEvent<OnRecycleEvent>();
-
-        int totalValue = 0;
-        foreach (var item in items)
+        if (!items.Contains(item))
         {
-            totalValue += item.Value;
-
-            onRecycleEvent.Invoke(new OnRecycleEvent(item));
+            Debug.LogWarning("Item not found in inventory.");
+            return;
         }
 
-        Debug.Log($"Checkout complete. Total value of items: {totalValue} points.");
-        ClearInventory();
+        EventManager.GetEvent<OnRecycleEvent>().Invoke(new OnRecycleEvent(item));
+        items.Remove(item);
 
+        Debug.Log($"Item checked out: {item.Name} for {item.Value} points.");
+    }
+
+    public void CheckoutAll()
+    {
+        foreach (var item in items)
+        {
+            CheckoutItem(item);
+        }
     }
 
 }
