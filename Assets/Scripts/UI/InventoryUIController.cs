@@ -94,12 +94,12 @@ public class InventoryUIController : MonoBehaviour
 
         foreach (ItemUIDisplay item in itemsToRemove)
         {
-            item.transform.DOMoveX(Screen.width + itemWidth + 100, 0.5f).SetEase(Ease.InBack);
+            item.transform.DOMoveX(Screen.width + itemWidth + 30f, 1f).SetEase(Ease.InBack);
             yield return new WaitForSeconds(0.1f);
         }
 
         // Make sure all items are processed before re-enabling the layout group
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1f);
 
         // Destroy all item UI elements
         foreach (var item in itemsToRemove)
