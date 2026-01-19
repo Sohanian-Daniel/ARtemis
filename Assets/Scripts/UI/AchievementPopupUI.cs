@@ -59,14 +59,14 @@ public class AchievementPopupUI : MonoBehaviour
         // Calculate total displacement and total delay based on count so that they all have the same speed on screen
         // Base duration is 2 seconds, base displacement is 200 units
         float baseDuration = 2f;
-        float baseDisplacement = 200f;
+        float baseDisplacement = 400f;
 
         // Calculated based on size of popup
-        float additionalDisplacement = rectTransform.rect.height / 2 + 10f;
+        float additionalDisplacement = rectTransform.rect.height + 50f;
         float additionalDelay = additionalDisplacement / baseDisplacement * baseDuration;
 
-        float totalDuration = baseDuration + (count - 1) * additionalDelay; // Each additional popup adds 0.5s to the duration
-        float totalDisplacement = baseDisplacement + (count - 1) * additionalDisplacement; // Each additional popup adds 50 units to the displacement
+        float totalDuration = baseDuration + count * additionalDelay; // Each additional popup adds 0.5s to the duration
+        float totalDisplacement = baseDisplacement + count * additionalDisplacement; // Each additional popup adds 50 units to the displacement
 
         rectTransform.DOMoveY(rectTransform.position.y + totalDisplacement, totalDuration).SetEase(Ease.OutCubic);
         popupInstance.GetComponent<CanvasGroup>().DOFade(0f, 2f).SetEase(Ease.OutCubic).SetDelay(totalDuration).OnComplete(() =>

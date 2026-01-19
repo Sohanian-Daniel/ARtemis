@@ -81,6 +81,10 @@ public class Item
         {"Styrofoam piece", 10f},
         {"Unlabeled litter", 10f},
         {"Cigarette", 10f},
+        {"Plastic", 80f},
+        {"Paper", 20f},
+        {"Glass", 60f},
+        {"Metal", 100f},
     };
 
     // Description dictionary
@@ -146,6 +150,10 @@ public class Item
         {"Styrofoam piece", "Pieces of Styrofoam, often from packaging."},
         {"Unlabeled litter", "Trash with no clear category."},
         {"Cigarette", "Cigarette butt."},
+        {"Plastic", "Generic plastic item."},
+        {"Paper", "Generic paper item."},
+        {"Glass", "Generic glass item."},
+        {"Metal", "Generic metal item."},
     };
 
     // Helper functions
